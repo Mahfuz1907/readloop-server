@@ -30,6 +30,7 @@ const database = mongoClient.db("readloop");
 // ------------------------------------------------------get the collections------------------------------------------------
 const usersCollections = database.collection("user");
 const categoriesCollections = database.collection("categories");
+const booksCollections = database.collection("books");
 
 // ------------------------------------------------------home route---------------------------------------------------------
 app.get("/", (req, res) => {
@@ -96,6 +97,13 @@ app.delete("/categories/delete/:id", async (req, res) => {
   res.send(result);
 });
 
+// add book
+app.post("/add-book", async (req, res) => {
+  const book = req.body;
+  const result = await booksCollections.insertOne(book);
+  res.send(result);
+});
+
 // --------------------------------------------------------------------------------------------------------------------------
 // -------------------------------------------------------only reader can access---------------------------------------------
 // --------------------------------------------------------------------------------------------------------------------------
@@ -109,6 +117,18 @@ app.get("/users/:id", async (req, res) => {
   const { id } = req.params;
   const user = await usersCollections.findOne({ _id: new ObjectId(id) });
   res.send(user);
+});
+
+// get all books
+app.get("/books", async (req, res) => {
+  const result = await booksCollections.find({}).toArray();
+  res.send(result);
+});
+
+// get featured books
+app.get("/featured-books", async (req, res) => {
+  const result = await booksCollections.find({}).limit(6).toArray();
+  res.send(result);
 });
 
 // -----------------------------------------------------------app listening--------------------------------------------------
