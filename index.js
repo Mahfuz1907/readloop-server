@@ -46,6 +46,13 @@ app.get("/users", async (req, res) => {
   res.send(users);
 });
 
+// delete user
+app.delete("/users/delete/:id", async (req, res) => {
+  const { id } = req.params;
+  const result = await usersCollections.deleteOne({ _id: new ObjectId(id) });
+  res.send(result);
+});
+
 // get users by role
 app.get("/users/role/:role", async (req, res) => {
   const { role } = req.params;
