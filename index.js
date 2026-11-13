@@ -120,6 +120,27 @@ app.post("/add-book", async (req, res) => {
   res.send(result);
 });
 
+// edit book
+app.put("/books/edit/:id", async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+  const updateDoc = {
+    $set: updatedData,
+  };
+  const result = await booksCollections.updateOne(
+    { _id: new ObjectId(id) },
+    updateDoc,
+  );
+  res.send(result);
+});
+
+// delete book
+app.delete("/books/delete/:id", async (req, res) => {
+  const { id } = req.params;
+  const result = await booksCollections.deleteOne({ _id: new ObjectId(id) });
+  res.send(result);
+});
+
 // --------------------------------------------------------------------------------------------------------------------------
 // -------------------------------------------------------only reader can access---------------------------------------------
 // --------------------------------------------------------------------------------------------------------------------------
