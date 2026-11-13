@@ -43,6 +43,7 @@ app.get("/", (req, res) => {
 
 // get all users
 app.get("/users", async (req, res) => {
+  let query = {};
   if (req.query) {
     if (req.query.search) {
       query.$or = [
@@ -78,6 +79,7 @@ app.post("/add-category", async (req, res) => {
 
 // get category
 app.get("/categories", async (req, res) => {
+  let query = {};
   if (req.query) {
     if (req.query.search) {
       query = { categoryName: { $regex: req.query.search, $options: "i" } };
@@ -135,7 +137,27 @@ app.get("/users/:id", async (req, res) => {
 
 // get all books
 app.get("/books", async (req, res) => {
-  const result = await booksCollections.find({}).toArray();
+  let query = {};
+  if (req.query) {
+    if (req.query.categoryName) {
+      query.categoryName = req.query.categoryName;
+    }
+    if (req.query.publishedYear) {
+      query.publishedYear = req.query.publishedYear;
+    }
+    if (req.query.pages) {
+      query.pages = req.query.pages;
+    }
+    if (req.query.search) {
+      query.$or = [
+        { title: { $regex: req.query.search, $options: "i" } },
+        { author: { $regex: req.query.search, $options: "i" } },
+        { description: { $regex: req.query.search, $options: "i" } },
+      ];
+    }
+  }
+
+  const result = await booksCollections.find(query).toArray();
   res.send(result);
 });
 
