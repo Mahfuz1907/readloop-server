@@ -43,7 +43,15 @@ app.get("/", (req, res) => {
 
 // get all users
 app.get("/users", async (req, res) => {
-  const users = await usersCollections.find({}).toArray();
+  if (req.query) {
+    if (req.query.search) {
+      query.$or = [
+        { name: { $regex: req.query.search, $options: "i" } },
+        { email: { $regex: req.query.search, $options: "i" } },
+      ];
+    }
+  }
+  const users = await usersCollections.find(query).toArray();
   res.send(users);
 });
 
@@ -70,7 +78,13 @@ app.post("/add-category", async (req, res) => {
 
 // get category
 app.get("/categories", async (req, res) => {
-  const categories = await categoriesCollections.find({}).toArray();
+  if (req.query) {
+    if (req.query.search) {
+      query = { categoryName: { $regex: req.query.search, $options: "i" } };
+    }
+  }
+  console.log(query);
+  const categories = await categoriesCollections.find(query).toArray();
   res.send(categories);
 });
 
